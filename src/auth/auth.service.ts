@@ -67,10 +67,10 @@ export class AuthService {
       return {
         data: {
           ...newUser,
-          token: this.getJwtToken({ ...newUser }),
+          accessToken: this.getJwtToken({ ...newUser }),
         },
         message:
-          'User created successfully, please check your email to activate your account',
+          'Usuario creado exitosamente.',
       };
     } catch (error) {
       this.handleDBError(error);
@@ -108,14 +108,21 @@ export class AuthService {
         email: true,
         password: true,
         id: true,
+        rol: true,
         firstname: true,
         lastname: true,
       },
+      relations: { rol: true },
     });
 
-    if (!user) throw new BadRequestException('Invalid credentials (email)');
-    if (!bcrypt.compareSync(password, user.password))
-      throw new UnauthorizedException('Invalid credentials (password)');
+    if (!user) {
+      this.logger.warn('Invalid credentials (email)');
+      throw new BadRequestException('Credenciales Invalidas');
+    }
+    if (!bcrypt.compareSync(password, user.password)){
+      this.logger.warn('Invalid credentials (password)');
+      throw new UnauthorizedException('Credenciales Invalidas');
+    }
 
     delete user.password;
 
@@ -251,6 +258,57 @@ export class AuthService {
     }
   }
 
+  async validateAccessToken(token: string) {
+    try {
+      // Verifica la firma y la expiración del token
+      const payload = this.jwtService.verify(token, {
+        secret: envs.JWT_SECRET,
+      });
+
+      // Opcionalmente, verifica que el usuario aún exista y esté activo
+      const user = await this.userRepository.findOne({
+        where: { id: payload.id, isActive: true },
+        select: ['id', 'email', 'firstname', 'lastname', 'isActive'],
+      });
+
+      if (!user) {
+        return {
+          valid: false,
+          message: 'User not found or inactive',
+        };
+      }
+
+      return {
+        valid: true,
+        payload,
+        user,
+        message: 'Token is valid',
+      };
+    } catch (error) {
+      this.logger.warn(`Invalid token: ${error.message}`);
+      
+      if (error.name === 'TokenExpiredError') {
+        return {
+          valid: false,
+          message: 'Token has expired',
+          expiredAt: error.expiredAt,
+        };
+      }
+
+      if (error.name === 'JsonWebTokenError') {
+        return {
+          valid: false,
+          message: 'Invalid token signature',
+        };
+      }
+
+      return {
+        valid: false,
+        message: 'Invalid token',
+      };
+    }
+  }
+
   private getJwtToken(
     payload: JwtPayload,
     expiresIn: ExpiresIn = '6h',
@@ -261,10 +319,10 @@ export class AuthService {
   handleDBError(error: any): never {
     this.logger.error(error.message);
     if (error.code === '23505') {
-      if (error.detail.includes('email'.toLocaleUpperCase())) {
-        throw new BadRequestException('email already exists');
+      if (error.detail.toUpperCase().includes('EMAIL')) {
+        throw new BadRequestException('El correo electrónico ya existe');
       }
-      throw new BadRequestException('nickname already exists');
+      throw new BadRequestException('El apodo ya existe');
     }
     throw new InternalServerErrorException(
       `Please check server logs for more details: ${error.message}, details: ${error.detail}`,

@@ -1,6 +1,7 @@
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Role } from './rol.entity';
 import { ROLES_CONSTANTS } from '../constants/userConstants';
+import { TxClient } from 'src/app/tx-client/entities/tx-client.entity';
 // import { ApiKey } from './api-key.entity';
 
 @Entity('user')
@@ -13,6 +14,9 @@ export class User {
   @ManyToOne(() => Role, rol => rol.users)
   @JoinColumn({ name: 'role_id' })
   rol?: Role;
+
+  @OneToMany(() => TxClient, txClient => txClient.user)
+  txsClient: TxClient[];
   // ========================================================
 
   @Column('text', { name: 'first_name' })

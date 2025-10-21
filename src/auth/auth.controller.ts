@@ -69,6 +69,20 @@ export class AuthController {
   //   return this.authService.logout(user);
   // }
 
+  @Post('validate-token')
+  async validateToken(@Headers('authorization') authorization: string) {
+    if (!authorization) {
+      return {
+        valid: false,
+        message: 'Authorization header is required',
+      };
+    }
+
+    // Extrae el token del header "Bearer <token>"
+    const token = authorization.replace('Bearer ', '');
+
+    return await this.authService.validateAccessToken(token);
+  }
 
   @Get('public')
   public() {
