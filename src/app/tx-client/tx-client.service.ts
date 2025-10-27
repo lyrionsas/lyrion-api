@@ -6,6 +6,9 @@ import { UpdateTxClientDto } from './dto/update-tx-client.dto';
 import { TxClient } from './entities/tx-client.entity';
 import { User } from 'src/auth/models';
 import { StatusTx } from 'src/enums/StatusTx.enum';
+import { BlockchainEnum } from 'src/enums/Blockchain.enum';
+import { WALLETS_ADDRESS } from 'src/common/const/wallets';
+
 
 @Injectable()
 export class TxClientService {
@@ -15,9 +18,11 @@ export class TxClientService {
   ) {}
 
   async create(createTxClientDto: CreateTxClientDto, user: User) {
-
     const txClient = this.txClientRepository.create({
       ...createTxClientDto,
+      walletAddressDestination: createTxClientDto.blockchainNetwork === BlockchainEnum.TRC20
+        ? WALLETS_ADDRESS.TRON
+        : WALLETS_ADDRESS.ETHEREUM,
       user: user, // Asignar el usuario completo del JWT
       transactionHash: null, // Inicialmente nulo
     });

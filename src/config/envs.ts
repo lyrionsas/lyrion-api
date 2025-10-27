@@ -24,6 +24,8 @@ interface EnvVars {
   SWAGGER_USER: string;
   SWAGGER_PASSWORD: string;
 
+  API_KEY_TRON: string;
+
   APP_ENV: 'development' | 'production' | 'QA';
 }
 
@@ -48,6 +50,8 @@ const envVarsSchema = joi.object<EnvVars>({
 
   SWAGGER_USER: joi.string().required(),
   SWAGGER_PASSWORD: joi.string().required(),
+
+  API_KEY_TRON: joi.string().required(),
 
   APP_ENV: joi.string().valid('development', 'production', 'QA').default('development'),
 }).unknown(true);
@@ -81,5 +85,8 @@ export const envs = {
 
   SWAGGER_USER: envVars.SWAGGER_USER,
   SWAGGER_PASSWORD: envVars.SWAGGER_PASSWORD,
+
+  API_KEY_TRON: envVars.API_KEY_TRON,
+
   APP_ENV: envVars.APP_ENV,
 };

@@ -20,6 +20,9 @@ export class TxClient {
   @Column('text', { name: 'wallet_address_source' })
   walletAddressSource: string;
 
+  @Column('text', { name: 'wallet_address_destination' })
+  walletAddressDestination: string;
+
   @Column('text', { name: 'transaction_hash', nullable: true })
   transactionHash: string | null;
 
