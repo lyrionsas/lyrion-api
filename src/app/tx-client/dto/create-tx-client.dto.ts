@@ -18,4 +18,12 @@ export class CreateTxClientDto {
 
   @IsEnum(CurrencyEnum)
   currency: CurrencyEnum;
+
+  @IsNumber()
+  @IsPositive()
+  amountInCOP: number;
+
+  @IsNumber()
+  @IsPositive()
+  priceUSDCOP: number;
 }

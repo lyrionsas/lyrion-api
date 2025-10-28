@@ -4,6 +4,7 @@ import { CreateTxClientDto } from './dto/create-tx-client.dto';
 import { UpdateTxClientDto } from './dto/update-tx-client.dto';
 import { Auth, GetUser } from 'src/auth/decorators';
 import { User } from 'src/auth/models';
+import { UpdateAmountInCOPDto } from './dto/update-amount-in-cop.dto';
 
 @Auth()
 @Controller('tx-client')
@@ -18,11 +19,6 @@ export class TxClientController {
     return this.txClientService.create(createTxClientDto, user);
   }
 
-  @Get('tx-pending-by-user')
-  findTxPendingByUser(@GetUser() user: User) {
-    return this.txClientService.findTxPendingByUser(user);
-  }
-
   @Get()
   findAll(
     @Query('page') page?: number,
@@ -31,9 +27,31 @@ export class TxClientController {
     return this.txClientService.findAll(page || 1, limit || 10);
   }
 
+  // @Get('by-user')
+  // findTxByUser(@GetUser() user: User) {
+  //   return this.txClientService.findTxByUser(user);
+  // }
+
+  @Get('last-tx-by-user')
+  findLastTxByUser(@GetUser() user: User) {
+    return this.txClientService.findLastTxByUser(user);
+  }
+
+  @Get('tx-pending-by-user')
+  findTxPendingByUser(@GetUser() user: User) {
+    return this.txClientService.findTxPendingByUser(user);
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.txClientService.findOne(id);
+  }
+
+  @Patch('update-amount-cop')
+  updateAmountInCOP(
+    @Body() updateAmountInCOPDto: UpdateAmountInCOPDto,
+  ) {
+    return this.txClientService.updateAmountInCOP(updateAmountInCOPDto);
   }
 
   @Patch(':id')

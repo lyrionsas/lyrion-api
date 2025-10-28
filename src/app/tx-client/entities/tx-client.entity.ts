@@ -32,6 +32,12 @@ export class TxClient {
   @Column('text', { name: 'currency' })
   currency: string; // USDT o USDC
 
+  @Column('numeric', { name: 'amount_in_cop', nullable:  true })
+  amountInCOP: number | null;
+
+  @Column('numeric', { name: 'price_usd_cop', nullable:  true })
+  priceUSDCOP: number | null;
+
   @Column('numeric', { name: 'fee', default: 0 })
   fee: number | null;
 
@@ -43,6 +49,9 @@ export class TxClient {
 
   @Column('timestamp', { name: 'updated_at' })
   updatedAt: Date;
+
+  @Column('timestamp', { name: 'completed_at', nullable: true })
+  completedAt: Date | null;
 
   @Column('timestamp', { name: 'limit_time_deposit', nullable: true })
   limitTimeDeposit: Date | null;

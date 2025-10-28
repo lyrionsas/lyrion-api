@@ -78,8 +78,6 @@ export class TronStrategy implements TransactionStrategy {
       );
     }
 
-    this.logger.log(`Transacción encontrada en BD: ID ${dbTransaction.id}`);
-
     // 2. Consultar la transacción en la blockchain de TRON
     const url = `${this.getApiUrl()}?hash=${data.hash}`;
     this.logger.log(`Consultando transacción TRON: ${data.hash}`);
@@ -103,7 +101,6 @@ export class TronStrategy implements TransactionStrategy {
     }
 
     const transferInfo = response.data.trc20TransferInfo[0];
-    this.logger.debug('Información de transferencia TRC20:', transferInfo);
 
     // 5. Validar el status de la transacción en la blockchain (0 = exitosa)
     if (transferInfo.status !== 0) {
@@ -136,18 +133,21 @@ export class TronStrategy implements TransactionStrategy {
       );
     }
 
-    this.logger.log('✅ Todas las validaciones pasaron exitosamente');
+    // 9. verificar moneda
+    if (transferInfo.symbol !== dbTransaction.currency) {
+      throw new BadRequestException(
+        `La moneda no coincide. Esperado: ${dbTransaction.currency}, Recibido: ${transferInfo.symbol}`
+      );
+    }
 
-    // 9. Actualizar el estado de la transacción en la base de datos
-    dbTransaction.status = StatusTx.COMPLETED;
+    // 10. Actualizar el estado de la transacción en la base de datos
+    dbTransaction.status = StatusTx.VERIFIED;
     dbTransaction.transactionHash = data.hash;
     await this.txClientRepository.save(dbTransaction);
 
-    this.logger.log(`Transacción actualizada a estado COMPLETED con hash: ${data.hash}`);
-
     // TODO: falta validar que la fecha si sea correcta y menor a 10 minutos.
 
-    // 10. Retornar respuesta exitosa
+    // 11. Retornar respuesta exitosa
     return {
       success: true,
       blockchain: 'TRC20',
@@ -171,7 +171,7 @@ export class TronStrategy implements TransactionStrategy {
         },
         status: {
           blockchain: 'SUCCESS',
-          database: StatusTx.COMPLETED,
+          database: StatusTx.VERIFIED,
         }
       },
       data: response.data,

@@ -8,6 +8,7 @@ import { User } from 'src/auth/models';
 import { StatusTx } from 'src/enums/StatusTx.enum';
 import { BlockchainEnum } from 'src/enums/Blockchain.enum';
 import { WALLETS_ADDRESS } from 'src/common/const/wallets';
+import { UpdateAmountInCOPDto } from './dto/update-amount-in-cop.dto';
 
 
 @Injectable()
@@ -34,6 +35,26 @@ export class TxClientService {
       idTx: txClient.id,
       limitTimeDeposit: txClient.limitTimeDeposit,
     };
+  }
+
+  async findLastTxByUser(user: User) {
+    const transactions = await this.txClientRepository.find({
+      where: { user: { id: user.id } },
+      order: { createdAt: 'DESC' },
+      take: 3,
+    });
+
+    const transactionParsed = transactions.map(tx => ({
+      id: `TX${tx.id}`,
+      date: tx.createdAt,
+      type: `Venta ${tx.currency}`,
+      amount: tx.transactionAmount,
+      currency: tx.currency,
+      fee: tx.fee,
+      status: tx.status,
+    }));
+
+    return transactionParsed;
   }
 
   async findTxPendingByUser(user: User) {
@@ -102,6 +123,20 @@ export class TxClientService {
     return {
       message: 'Transacción actualizada exitosamente',
       data: updatedTransaction,
+    };
+  }
+
+  async updateAmountInCOP(updateAmountInCOPDto: UpdateAmountInCOPDto) {
+    const transaction = await this.findOne(updateAmountInCOPDto.idTransaction);
+
+    transaction.amountInCOP = updateAmountInCOPDto.amountInCOP;
+    transaction.priceUSDCOP = updateAmountInCOPDto.priceUSDCOP;
+
+    await this.txClientRepository.save(transaction);
+
+    return {
+      message: 'Montos actualizados exitosamente',
+      data: transaction,
     };
   }
 
