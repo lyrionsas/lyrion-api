@@ -27,10 +27,10 @@ export class TxClientController {
     return this.txClientService.findAll(page || 1, limit || 10);
   }
 
-  // @Get('by-user')
-  // findTxByUser(@GetUser() user: User) {
-  //   return this.txClientService.findTxByUser(user);
-  // }
+  @Get('by-user')
+  findTxByUser(@GetUser() user: User) {
+    return this.txClientService.findTxByUser(user);
+  }
 
   @Get('last-tx-by-user')
   findLastTxByUser(@GetUser() user: User) {
@@ -40,6 +40,11 @@ export class TxClientController {
   @Get('tx-pending-by-user')
   findTxPendingByUser(@GetUser() user: User) {
     return this.txClientService.findTxPendingByUser(user);
+  }
+
+  @Get('count-amount-commerce-tx-by-user')
+  countAmountCommerceTxByUser(@GetUser() user: User) {
+    return this.txClientService.countAmountCommerceTxByUser(user);
   }
 
   @Get(':id')
@@ -52,6 +57,11 @@ export class TxClientController {
     @Body() updateAmountInCOPDto: UpdateAmountInCOPDto,
   ) {
     return this.txClientService.updateAmountInCOP(updateAmountInCOPDto);
+  }
+
+  @Patch('cancel-tx/:id')
+  cancelTx(@Param('id', ParseIntPipe) id: number) {
+    return this.txClientService.cancelTx(id);
   }
 
   @Patch(':id')

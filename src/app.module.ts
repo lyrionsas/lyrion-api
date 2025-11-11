@@ -4,8 +4,9 @@ import { DatabaseModule } from './database/database.module';
 import { TxClientModule } from './app/tx-client/tx-client.module';
 import { TxPrismaPayModule } from './app/tx-prisma-pay/tx-prisma-pay.module';
 import { NetworksModule } from './app/networks/networks.module';
+import { BankAccountsModule } from './app/bank-accounts/bank-accounts.module';
 
 @Module({
-  imports: [AuthModule, DatabaseModule, TxClientModule, TxPrismaPayModule, NetworksModule],
+  imports: [AuthModule, DatabaseModule, TxClientModule, TxPrismaPayModule, NetworksModule, BankAccountsModule],
 })
 export class AppModule {}

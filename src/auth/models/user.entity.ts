@@ -2,6 +2,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneT
 import { Role } from './rol.entity';
 import { ROLES_CONSTANTS } from '../constants/userConstants';
 import { TxClient } from 'src/app/tx-client/entities/tx-client.entity';
+import { BankAccount } from 'src/app/bank-accounts/entities/bank-accounts.entity';
 // import { ApiKey } from './api-key.entity';
 
 @Entity('user')
@@ -17,6 +18,9 @@ export class User {
 
   @OneToMany(() => TxClient, txClient => txClient.user)
   txsClient: TxClient[];
+
+  @OneToMany(() => BankAccount, bankAccount => bankAccount.userId)
+  bankAccounts: BankAccount[];
   // ========================================================
 
   @Column('text', { name: 'first_name' })

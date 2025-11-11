@@ -49,6 +49,7 @@ export class TxClientService {
       date: tx.createdAt,
       type: `Venta ${tx.currency}`,
       amount: tx.transactionAmount,
+      amountInCOP: tx.amountInCOP,
       currency: tx.currency,
       fee: tx.fee,
       status: tx.status,
@@ -76,6 +77,35 @@ export class TxClientService {
     }));
 
     return transactionParsed;
+  }
+
+  async countAmountCommerceTxByUser(user: User) {
+    const completed = await this.txClientRepository
+      .createQueryBuilder('tx')
+      .select('SUM(tx.transactionAmount)', 'sum')
+      .where('tx.user_id = :userId', { userId: user.id })
+      .andWhere('tx.status = :status', { status: StatusTx.COMPLETED })
+      .getRawOne();
+
+    const pending = await this.txClientRepository
+      .createQueryBuilder('tx')
+      .select('SUM(tx.transactionAmount)', 'sum')
+      .where('tx.user_id = :userId', { userId: user.id })
+      .andWhere('tx.status = :status', { status: StatusTx.PENDING })
+      .getRawOne();
+
+    const verified = await this.txClientRepository
+      .createQueryBuilder('tx')
+      .select('SUM(tx.transactionAmount)', 'sum')
+      .where('tx.user_id = :userId', { userId: user.id })
+      .andWhere('tx.status = :status', { status: StatusTx.VERIFIED })
+      .getRawOne();
+
+    return {
+      completedAmountCommerceTx: completed.sum || 0,
+      pendingAmountCommerceTx: pending.sum || 0,
+      verifiedAmountCommerceTx: verified.sum || 0,
+    };
   }
 
   async findAll(page: number = 1, limit: number = 10) {
@@ -114,6 +144,26 @@ export class TxClientService {
     return transaction;
   }
 
+  async findTxByUser(user: User) {
+    const transactions = await this.txClientRepository.find({
+      where: { user: { id: user.id } },
+      order: { createdAt: 'DESC' },
+    });
+
+    const transactionParsed = transactions.map(tx => ({
+      id: `TX${tx.id}`,
+      date: tx.createdAt,
+      type: `Venta ${tx.currency}`,
+      amount: tx.transactionAmount,
+      amountInCOP: tx.amountInCOP,
+      currency: tx.currency,
+      fee: tx.fee,
+      status: tx.status,
+    }));
+
+    return transactionParsed;
+  }
+
   async update(id: number, updateTxClientDto: UpdateTxClientDto) {
     const transaction = await this.findOne(id);
 
@@ -136,6 +186,18 @@ export class TxClientService {
 
     return {
       message: 'Montos actualizados exitosamente',
+      data: transaction,
+    };
+  }
+
+  async cancelTx(id: number) {
+    const transaction = await this.findOne(id);
+
+    transaction.status = StatusTx.CANCELLED;
+    await this.txClientRepository.save(transaction);
+
+    return {
+      message: 'Transacción cancelada exitosamente',
       data: transaction,
     };
   }

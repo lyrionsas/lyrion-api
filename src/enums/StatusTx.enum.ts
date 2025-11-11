@@ -4,4 +4,5 @@ export enum StatusTx {
   VERIFIED = 'verified',
   COMPLETED = 'completed',
   FAILED = 'failed',
+  CANCELLED = 'cancelled',
 }
