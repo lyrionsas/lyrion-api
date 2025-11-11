@@ -34,6 +34,11 @@ export class BankAccountsController {
     return this.bankAccountsService.findAll(user.id);
   }
 
+  @Get('by-user')
+  findAllByUser(@GetUser() user: User) {
+    return this.bankAccountsService.findAllByUser(user.id);
+  }
+
   @Get('stats')
   getStats(@GetUser() user: User) {
     return this.bankAccountsService.getStats(user.id);

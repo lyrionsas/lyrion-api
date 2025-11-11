@@ -56,6 +56,13 @@ export class BankAccountsService {
     });
   }
 
+  async findAllByUser(userId: number): Promise<BankAccount[]> {
+    return await this.bankAccountRepository.find({
+      where: { userId: { id: userId } },
+      order: { createAt: 'DESC' },
+    });
+  }
+
   async findOne(id: number, userId: number): Promise<BankAccount> {
     const bankAccount = await this.bankAccountRepository.findOne({
       where: { id, userId: { id: userId }, isActive: true },
