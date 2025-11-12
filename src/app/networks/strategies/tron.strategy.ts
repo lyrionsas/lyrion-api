@@ -89,7 +89,7 @@ export class TronStrategy implements TransactionStrategy {
     );
 
     // 3. Verificar si la transacción existe y tiene datos válidos
-    if (!response.data) {
+    if (!response.data || Object.keys(response.data).length === 0) {
       throw new BadRequestException('Transacción no encontrada en la red TRON');
     }
 
@@ -112,7 +112,7 @@ export class TronStrategy implements TransactionStrategy {
     // 6. Validar wallet origen
     if (transferInfo.from_address !== dbTransaction.walletAddressSource) {
       throw new BadRequestException(
-        `La wallet de origen no coincide. Esperado: ${dbTransaction.walletAddressSource}, Recibido: ${transferInfo.from_address}`
+        `La wallet de origen no coincide. Esperado: ${transferInfo.from_address}, Recibido: ${dbTransaction.walletAddressSource}`
       );
     }
 
@@ -137,6 +137,16 @@ export class TronStrategy implements TransactionStrategy {
     if (transferInfo.symbol !== dbTransaction.currency) {
       throw new BadRequestException(
         `La moneda no coincide. Esperado: ${dbTransaction.currency}, Recibido: ${transferInfo.symbol}`
+      );
+    }
+
+    // 10. verificar que en base de datos la transaccion no este aun pagada
+    if(
+      dbTransaction.status === StatusTx.COMPLETED ||
+      dbTransaction.status === StatusTx.FAILED ||
+      dbTransaction.status === StatusTx.CANCELLED ) {
+      throw new BadRequestException(
+        `La transacción ya ha sido completada previamente.`
       );
     }
 

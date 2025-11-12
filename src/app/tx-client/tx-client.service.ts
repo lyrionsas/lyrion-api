@@ -9,6 +9,9 @@ import { StatusTx } from 'src/enums/StatusTx.enum';
 import { BlockchainEnum } from 'src/enums/Blockchain.enum';
 import { WALLETS_ADDRESS } from 'src/common/const/wallets';
 import { UpdateAmountInCOPDto } from './dto/update-amount-in-cop.dto';
+import { PricesService } from '../prices/prices.service';
+import { LIMIT_DIFFERENCE_PRICE_USD_COP } from 'src/common/const/limits';
+import { GeneratePaymentDto } from './dto/generate.payment.dto';
 
 
 @Injectable()
@@ -16,9 +19,20 @@ export class TxClientService {
   constructor(
     @InjectRepository(TxClient)
     private readonly txClientRepository: Repository<TxClient>,
+    private readonly priceService: PricesService,
   ) {}
 
   async create(createTxClientDto: CreateTxClientDto, user: User) {
+    const latestPrice = await this.priceService.getLatestPrice('USD/COP');
+    if (!latestPrice) {
+      throw new NotFoundException('No se encontró el precio actual USD/COP');
+    }
+
+    const priceDifference = Math.abs(latestPrice.price - createTxClientDto.priceUSDCOP);
+    if (priceDifference > LIMIT_DIFFERENCE_PRICE_USD_COP) {
+      throw new NotFoundException('El precio USD/COP proporcionado difiere más de 30 pesos del precio actual');
+    }
+
     const txClient = this.txClientRepository.create({
       ...createTxClientDto,
       walletAddressDestination: createTxClientDto.blockchainNetwork === BlockchainEnum.TRC20
@@ -29,6 +43,8 @@ export class TxClientService {
     });
 
     await this.txClientRepository.save(txClient);
+
+    // TODO: Enviar a prismaPay la solicitud de transaccion y esperar confirmacion para notificar al cliente.
 
     return {
       message: 'Transacción creada exitosamente',
@@ -190,6 +206,28 @@ export class TxClientService {
     };
   }
 
+  async generatePayment( generatePaymentDto: GeneratePaymentDto, user: User ) {
+    const txClient = await this.txClientRepository.findOne({
+      where: {
+        user: { id: user.id },
+        status: StatusTx.VERIFIED,
+        id: generatePaymentDto.idTransaction,
+      },
+    });
+
+    if (!txClient) {
+      throw new NotFoundException('Transacción no encontrada o no está verificada.');
+    }
+
+    if (!txClient.amountInCOP || txClient.amountInCOP < generatePaymentDto.amountInCOP) {
+      throw new NotFoundException('La cantidad en COP es insuficiente para generar el pago.');
+    }
+
+    // TODO: generar registro de como se hara el pago segun bancos
+    // TODO: enviar a prismaPay la solicitud de pago
+
+  }
+
   async cancelTx(id: number) {
     const transaction = await this.findOne(id);
 
@@ -204,6 +242,11 @@ export class TxClientService {
 
   async remove(id: number) {
     const transaction = await this.findOne(id);
+
+    if( transaction.status === StatusTx.COMPLETED || transaction.status === StatusTx.VERIFIED ) {
+      throw new NotFoundException(`No se puede eliminar la transacción.`);
+    }
+
     await this.txClientRepository.remove(transaction);
 
     return {

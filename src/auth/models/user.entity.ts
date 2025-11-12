@@ -3,6 +3,7 @@ import { Role } from './rol.entity';
 import { ROLES_CONSTANTS } from '../constants/userConstants';
 import { TxClient } from 'src/app/tx-client/entities/tx-client.entity';
 import { BankAccount } from 'src/app/bank-accounts/entities/bank-accounts.entity';
+import { RequestPayments } from 'src/app/request-payments/entities/request-payments.entity';
 // import { ApiKey } from './api-key.entity';
 
 @Entity('user')
@@ -21,6 +22,9 @@ export class User {
 
   @OneToMany(() => BankAccount, bankAccount => bankAccount.userId)
   bankAccounts: BankAccount[];
+
+  @OneToMany(() => RequestPayments, requestPayments => requestPayments.userId)
+  requestPayments: RequestPayments[];
   // ========================================================
 
   @Column('text', { name: 'first_name' })

@@ -1,6 +1,7 @@
+import { RequestPayments } from "src/app/request-payments/entities/request-payments.entity";
 import { User } from "src/auth/models";
 import { StatusTx } from "src/enums/StatusTx.enum";
-import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('tx_client')
 export class TxClient {
@@ -12,6 +13,10 @@ export class TxClient {
   @ManyToOne(() => User, user => user.txsClient)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToOne(() => RequestPayments, requestPayments => requestPayments.transaction)
+  requestPayment: RequestPayments;
+
   // ========================================================
 
   @Column('text', { name: 'blockchain_network' })
