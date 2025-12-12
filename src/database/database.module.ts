@@ -24,7 +24,8 @@ import { RoleSeeder } from './seeders/role.seeder';
         ssl: envs.APP_ENV === 'production'
           ? { rejectUnauthorized: false }
           : false,
-        synchronize: envs.APP_ENV === 'development' ? true : false,
+        // synchronize: envs.APP_ENV === 'development' ? true : false,
+        synchronize: true, // Auto-crear tablas desde las entidades
       }),
     }),
     TypeOrmModule.forFeature([Role]),

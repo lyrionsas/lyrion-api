@@ -15,6 +15,9 @@ async function bootstrap() {
     origin: envs.FRONTEND_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization, x-api-key',
+    credentials: true,
+    preflightContinue: false,
+    optionsSuccessStatus: 204
   });
 
   app.setGlobalPrefix('api');

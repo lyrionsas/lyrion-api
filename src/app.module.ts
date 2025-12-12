@@ -7,8 +7,19 @@ import { NetworksModule } from './app/networks/networks.module';
 import { BankAccountsModule } from './app/bank-accounts/bank-accounts.module';
 import { PricesModule } from './app/prices/prices.module';
 import { RequestPaymentsModule } from './app/request-payments/request-payments.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
-  imports: [AuthModule, DatabaseModule, TxClientModule, TxPrismaPayModule, NetworksModule, BankAccountsModule, PricesModule, RequestPaymentsModule],
+  imports: [
+    HealthModule,
+    AuthModule,
+    DatabaseModule,
+    TxClientModule,
+    TxPrismaPayModule,
+    NetworksModule,
+    BankAccountsModule,
+    PricesModule,
+    RequestPaymentsModule,
+  ],
 })
 export class AppModule {}
