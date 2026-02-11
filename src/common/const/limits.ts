@@ -1,0 +1,3 @@
+
+
+export const LIMIT_DIFFERENCE_PRICE_USD_COP = 30;

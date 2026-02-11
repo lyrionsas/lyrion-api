@@ -1,0 +1,32 @@
+### Validar transacción TRON
+POST http://localhost:3000/networks/validate-tx-tron
+Content-Type: application/json
+
+{
+  "idTransaction": 1,
+  "hash": "7c2d4206c03e1358df9867a2c87149a2e7a4cdd3e5b0c4d6f3e2a1b0c9d8e7f6"
+}
+
+###
+
+### Validar transacción TRON - Hash inválido (debe devolver error)
+POST http://localhost:3000/networks/validate-tx-tron
+Content-Type: application/json
+
+{
+  "idTransaction": 1,
+  "hash": ""
+}
+
+###
+
+### Validar transacción Ethereum (Not Implemented)
+POST http://localhost:3000/networks/validate-tx-ethereum
+Content-Type: application/json
+
+{
+  "idTransaction": 1,
+  "hash": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+}
+
+###

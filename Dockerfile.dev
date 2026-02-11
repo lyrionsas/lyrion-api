@@ -1,0 +1,14 @@
+FROM node:24-alpine3.21
+
+WORKDIR /usr/src/app
+
+COPY package.json package-lock.json ./
+RUN npm install
+
+# instala cli globalmente para comodidad en dev
+RUN npm install -g @nestjs/cli
+
+COPY . .
+
+EXPOSE 3000
+CMD ["npm", "run", "start:dev"]

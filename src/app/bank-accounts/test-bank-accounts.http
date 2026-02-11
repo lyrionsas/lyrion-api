@@ -1,0 +1,196 @@
+### Variables
+@baseUrl = http://localhost:3000
+@token = YOUR_AUTH_TOKEN_HERE
+
+### 1. Crear cuenta Bancolombia
+POST {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bankName": "Bancolombia",
+  "accountType": "Ahorros",
+  "accountNumber": "1234567890",
+  "accountHolderName": "Juan Pérez García",
+  "typeDocumentHolder": "Cédula de Ciudadanía",
+  "accountHolderDocument": "1234567890"
+}
+
+### 2. Crear cuenta Nequi
+POST {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bankName": "Nequi",
+  "accountType": "Ahorros",
+  "accountNumber": "3001234567",
+  "accountHolderName": "María García López",
+  "typeDocumentHolder": "Cédula de Ciudadanía",
+  "accountHolderDocument": "9876543210"
+}
+
+### 3. Crear cuenta Davivienda Corriente
+POST {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bankName": "Davivienda",
+  "accountType": "Corriente",
+  "accountNumber": "0123456789",
+  "accountHolderName": "Carlos Rodríguez",
+  "typeDocumentHolder": "Cédula de Ciudadanía",
+  "accountHolderDocument": "5555555555"
+}
+
+### 4. Crear cuenta BBVA
+POST {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bankName": "BBVA Colombia",
+  "accountType": "Ahorros",
+  "accountNumber": "8888888888",
+  "accountHolderName": "Ana Martínez",
+  "typeDocumentHolder": "Cédula de Extranjería",
+  "accountHolderDocument": "7777777777"
+}
+
+### 5. Obtener todas las cuentas
+GET {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+
+### 6. Obtener estadísticas
+GET {{baseUrl}}/bank-accounts/stats
+Authorization: Bearer {{token}}
+
+### 7. Obtener cuenta por ID (reemplazar :id)
+GET {{baseUrl}}/bank-accounts/1
+Authorization: Bearer {{token}}
+
+### 8. Actualizar cuenta (reemplazar :id)
+PATCH {{baseUrl}}/bank-accounts/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "accountHolderName": "Juan Carlos Pérez García"
+}
+
+### 9. Eliminar cuenta (reemplazar :id)
+DELETE {{baseUrl}}/bank-accounts/1
+Authorization: Bearer {{token}}
+
+### 10. Error - Número de cuenta inválido (muy corto)
+POST {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bankName": "Bancolombia",
+  "accountType": "Ahorros",
+  "accountNumber": "12345",
+  "accountHolderName": "Test User",
+  "typeDocumentHolder": "Cédula de Ciudadanía",
+  "accountHolderDocument": "1234567890"
+}
+
+### 11. Error - Número de cuenta con letras
+POST {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bankName": "Bancolombia",
+  "accountType": "Ahorros",
+  "accountNumber": "123ABC7890",
+  "accountHolderName": "Test User",
+  "typeDocumentHolder": "Cédula de Ciudadanía",
+  "accountHolderDocument": "1234567890"
+}
+
+### 12. Error - Tipo de cuenta inválido
+POST {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bankName": "Bancolombia",
+  "accountType": "Nomina",
+  "accountNumber": "1234567890",
+  "accountHolderName": "Test User",
+  "typeDocumentHolder": "Cédula de Ciudadanía",
+  "accountHolderDocument": "1234567890"
+}
+
+### 13. Error - Banco inválido
+POST {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bankName": "Banco Internacional",
+  "accountType": "Ahorros",
+  "accountNumber": "1234567890",
+  "accountHolderName": "Test User",
+  "typeDocumentHolder": "Cédula de Ciudadanía",
+  "accountHolderDocument": "1234567890"
+}
+
+### 14. Crear cuenta Banco de Bogotá
+POST {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bankName": "Banco de Bogotá",
+  "accountType": "Ahorros",
+  "accountNumber": "123456789",
+  "accountHolderName": "Pedro Gómez",
+  "typeDocumentHolder": "Pasaporte",
+  "accountHolderDocument": "4444444444"
+}
+
+### 15. Crear cuenta Daviplata
+POST {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bankName": "Daviplata",
+  "accountType": "Ahorros",
+  "accountNumber": "3209876543",
+  "accountHolderName": "Laura Sánchez",
+  "typeDocumentHolder": "Cédula de Ciudadanía",
+  "accountHolderDocument": "6666666666"
+}
+
+### 16. Error - Tipo de documento inválido
+POST {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bankName": "Bancolombia",
+  "accountType": "Ahorros",
+  "accountNumber": "1234567890",
+  "accountHolderName": "Test User",
+  "typeDocumentHolder": "DNI",
+  "accountHolderDocument": "1234567890"
+}
+
+### 17. Crear cuenta con NIT
+POST {{baseUrl}}/bank-accounts
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bankName": "Banco de Bogotá",
+  "accountType": "Corriente",
+  "accountNumber": "9876543210",
+  "accountHolderName": "Empresa XYZ S.A.S.",
+  "typeDocumentHolder": "NIT",
+  "accountHolderDocument": "900123456"
+}
