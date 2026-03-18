@@ -45,7 +45,7 @@ export class User {
   @Column('text', { name: 'phone' })
   phone: string;
 
-  @Column('bool', { default: true, name: 'is_active' })
+  @Column('bool', { default: false, name: 'is_active' })
   isActive?: boolean;
 
   @Column('bool', { default: false, name: 'is_admin' })
