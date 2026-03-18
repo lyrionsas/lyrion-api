@@ -51,6 +51,6 @@ async function bootstrap() {
 
 
   await app.listen(envs.PORT);
-  logger.log(`API Lyrion corriendo en ${envs.HOST}:${envs.PORT}`);
+  logger.log(`API Lyrion corriendo en el puerto:${envs.PORT}`);
 }
 void bootstrap();

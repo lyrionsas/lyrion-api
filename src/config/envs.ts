@@ -3,7 +3,6 @@ import 'dotenv/config';
 import * as joi from 'joi';
 
 interface EnvVars {
-  HOST: string;
   PORT: number;
   FRONTEND_URL: string;
 
@@ -30,8 +29,7 @@ interface EnvVars {
 }
 
 const envVarsSchema = joi.object<EnvVars>({
-  HOST: joi.string().required(),
-  PORT: joi.number().default(3000),
+  PORT: joi.number().default(parseInt(process.env.PORT || '3000', 10)),
   FRONTEND_URL: joi.string().uri().required(),
 
   JWT_SECRET: joi.string().min(32).required(),
@@ -65,7 +63,6 @@ if (error) {
 const envVars: EnvVars = value;
 
 export const envs = {
-  HOST: envVars.HOST,
   PORT: envVars.PORT,
   FRONTEND_URL: envVars.FRONTEND_URL,
 
